@@ -1,7 +1,9 @@
 buildscript {
     ext.kotlin_version = '1.3.72'
+    ext.ktor_version = '1.3.2'
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -11,21 +13,22 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
-mainClassName = 'eu.preuk.MainKt'
-
-defaultTasks 'run'
+mainClassName = 'eu.preuk.GastroCupKt'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
+    compile "io.ktor:ktor-server-core:$ktor_version"
+    compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile 'junit:junit:4.11'
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }
 
 jar {
-    manifest { attributes 'Main-Class': 'eu.preuk.MainKt' }
+    manifest { attributes 'Main-Class': 'eu.preuk.GastroCupKt' }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
