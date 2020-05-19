@@ -2,13 +2,15 @@
 
 package models
 
-import com.google.common.hash.Hashing
-import java.nio.charset.StandardCharsets
-import java.util.*
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Column
 
-class User(val username: String, password: String) {
-    val password : String = Hashing.sha256()
-            .hashString(password, StandardCharsets.UTF_8)
-            .toString()
-    val dateCreated = Date().toString()
+enum class Role {Admin, Referee, TeamLeader, TeamMember}
+
+object User : IntIdTable() {
+    val email: Column<String> = varchar("email", 50)
+    val name: Column<String> = varchar("name", 50)
+    val surname: Column<String> = varchar("surname", 50)
+    val password: Column<String> = varchar("password", 64)
+    val role = customEnumeration("role", "ENUM('Admin', 'Referee', 'TeamLeader', 'TeamMember'", { value -> Role.valueOf(value as String)}, {it.name})
 }
