@@ -3,14 +3,12 @@
 package models
 
 import com.google.common.hash.Hashing
-import io.ktor.application.ApplicationCall
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.nio.charset.Charset
-import java.lang.IllegalArgumentException
 
 enum class Role { Admin, Referee, TeamLeader, TeamMember }
 
@@ -28,6 +26,10 @@ object Users : IntIdTable() {
 
         return transaction { User.findById(id) } ?: throw IllegalArgumentException()
     }
+
+    fun hashPassword(password: String): String {
+        return Hashing.sha256().hashString(password, Charset.defaultCharset()).toString()
+    }
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
@@ -42,8 +44,5 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 
     fun toModel(): UserModel {
         return UserModel(id.value, email, name, surname, password, role)
-    }
-    fun hashPassword() {
-        password = Hashing.sha256().hashString(password, Charset.defaultCharset()).toString()
     }
 }
