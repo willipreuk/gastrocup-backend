@@ -3,6 +3,7 @@
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
@@ -28,12 +29,13 @@ fun Application.main() {
             setPrettyPrinting()
         }
     }
-    install(Routing) {
-        user()
-    }
+    install(Routing)
     install(StatusPages) {
-        exception<IllegalArgumentException> { _ ->
+        exception<IllegalArgumentException> { cause ->
             call.response.status(HttpStatusCode.BadRequest)
+
+            // remove for production
+            call.respond(mapOf("error" to cause.localizedMessage))
         }
         exception<ExposedSQLException> { cause ->
             call.response.status(HttpStatusCode.BadRequest)
@@ -41,6 +43,11 @@ fun Application.main() {
             // remove for production
             call.respond(mapOf("error" to cause.localizedMessage))
         }
-    }
+        exception<NoSuchElementException> { cause ->
+            call.response.status(HttpStatusCode.NotFound)
 
+            // remove for production
+            call.respond(mapOf("error" to cause.localizedMessage))
+        }
+    }
 }
