@@ -29,7 +29,6 @@ fun Application.auth() {
     val validityInMs = environment.config.property("jwt.validityInMs").getString().toInt()
 
     val algorithm = Algorithm.HMAC512(secret)
-
     val verifier = JWT.require(algorithm).withIssuer(domain).withAudience(audience).build()
 
     fun getExpiration() = Date(System.currentTimeMillis() + validityInMs)
@@ -58,7 +57,7 @@ fun Application.auth() {
             validate {
                 with(it.payload) {
                     val id = getClaim("id")
-                    if(id.isNull) {
+                    if (id.isNull) {
                         null
                     } else {
                         JWTPrincipal(it.payload)
@@ -81,6 +80,28 @@ fun Application.auth() {
             realm = domain
             validate {
                 if (!validate(it.payload, Role.Referee))
+                    JWTPrincipal(it.payload)
+                else {
+                    null
+                }
+            }
+        }
+        jwt(name = "TeamLeader") {
+            verifier(verifier)
+            realm = domain
+            validate {
+                if (!validate(it.payload, Role.TeamLeader))
+                    JWTPrincipal(it.payload)
+                else {
+                    null
+                }
+            }
+        }
+        jwt(name = "TeamMember") {
+            verifier(verifier)
+            realm = domain
+            validate {
+                if (!validate(it.payload, Role.TeamMember))
                     JWTPrincipal(it.payload)
                 else {
                     null

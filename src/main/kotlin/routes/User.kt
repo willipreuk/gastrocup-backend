@@ -52,7 +52,7 @@ fun Routing.user() {
 
         fun checkSameUser(principal: JWTPrincipal?, id: String) {
             val principalPayload = principal?.payload ?: throw IllegalArgumentException()
-            if(Role.valueOf(principalPayload.getClaim("role").asString()) != Role.Admin) {
+            if (Role.valueOf(principalPayload.getClaim("role").asString()) != Role.Admin) {
                 if (principalPayload.id != id) {
                     throw IllegalArgumentException()
                 }

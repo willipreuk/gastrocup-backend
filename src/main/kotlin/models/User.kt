@@ -26,7 +26,8 @@ object Users : IntIdTable() {
 
         return transaction { User.findById(id) } ?: throw IllegalArgumentException()
     }
-    fun hashPassword(password: String) : String {
+
+    fun hashPassword(password: String): String {
         return Hashing.sha256().hashString(password, Charset.defaultCharset()).toString()
     }
 }
