@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
 
-data class TeamModel(val id: Int, val name: String, val leader: User, val members: List<User>)
+data class TeamModel(val id: Int, val name: String, val leader: UserModel, val members: List<UserModel>)
 
 // junction table
 object TeamMembers : Table() {
@@ -28,6 +28,6 @@ class Team(id: EntityID<Int>): IntEntity(id) {
     var members by User via TeamMembers
 
     fun toModel(): TeamModel {
-        return TeamModel(id.value, name, leader, members.toList())
+         return TeamModel(id.value, name, leader.toModel(), members.toList().map { member -> member.toModel() })
     }
 }

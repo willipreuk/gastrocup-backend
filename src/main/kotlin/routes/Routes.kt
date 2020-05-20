@@ -6,5 +6,6 @@ import io.ktor.routing.routing
 fun Application.routes() {
     routing {
         user()
+        team()
     }
 }
