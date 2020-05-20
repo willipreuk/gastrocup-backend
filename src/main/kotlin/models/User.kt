@@ -12,5 +12,5 @@ object User : IntIdTable() {
     val name: Column<String> = varchar("name", 50)
     val surname: Column<String> = varchar("surname", 50)
     val password: Column<String> = varchar("password", 64)
-    val role = customEnumeration("role", "ENUM('Admin', 'Referee', 'TeamLeader', 'TeamMember'", { value -> Role.valueOf(value as String)}, {it.name})
+    val role = customEnumeration("role", "ENUM('Admin', 'Referee', 'TeamLeader', 'TeamMember')", { value -> Role.valueOf(value as String)}, {it.name})
 }
