@@ -1,3 +1,4 @@
+import models.Teams
 import models.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -13,7 +14,7 @@ class DB() {
     fun createSchemas() {
         transaction {
             addLogger(StdOutSqlLogger)
-            SchemaUtils.create(Users)
+            SchemaUtils.create(Users, Teams)
         }
     }
 }

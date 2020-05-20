@@ -39,7 +39,6 @@ class User(id: EntityID<Int>) : IntEntity(id) {
     var name by Users.name
     var surname by Users.surname
     var password by Users.password
-
     var role by Users.role
 
     fun toModel(): UserModel {
