@@ -12,7 +12,7 @@ import java.nio.charset.Charset
 
 enum class Role { Admin, Referee, TeamLeader, TeamMember }
 
-data class UserModel(val id: Int, val email: String, val name: String, val surname: String, val password: String, val role: Role)
+data class UserModel(val id: Int, val email: String, val name: String, val surname: String, val role: Role)
 
 object Users : IntIdTable() {
     val email = varchar("email", 50).uniqueIndex()
@@ -24,7 +24,7 @@ object Users : IntIdTable() {
     fun getById(idString: String?): User {
         val id = idString!!.toInt()
 
-        return transaction { User.findById(id) } ?: throw IllegalArgumentException()
+        return transaction { User.findById(id) } ?: throw NoSuchElementException()
     }
 
     fun hashPassword(password: String): String {
@@ -42,6 +42,6 @@ class User(id: EntityID<Int>) : IntEntity(id) {
     var role by Users.role
 
     fun toModel(): UserModel {
-        return UserModel(id.value, email, name, surname, password, role)
+        return UserModel(id.value, email, name, surname, role)
     }
 }
