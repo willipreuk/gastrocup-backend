@@ -3,18 +3,16 @@
 package models
 
 import com.google.common.hash.Hashing
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.nio.charset.Charset
+import java.time.LocalDateTime
 
 enum class Role { Admin, Referee, TeamLeader, TeamMember }
 
-data class UserModel(val id: Int, val email: String, val name: String, val surname: String, val role: Role)
+data class UserModel(val id: Int, val email: String, val name: String, val surname: String, val role: Role, val createdAt: LocalDateTime, val updatedAt: LocalDateTime)
 
-object Users : IntIdTable() {
+object Users : BaseIntIdTable("Users") {
     val email = varchar("email", 50).uniqueIndex()
     val name = varchar("name", 50)
     val surname = varchar("surname", 50)
@@ -32,8 +30,8 @@ object Users : IntIdTable() {
     }
 }
 
-class User(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<User>(Users)
+class User(id: EntityID<Int>) : BaseIntEntity(id, Users) {
+    companion object : BaseIntEntityClass<User>(Users)
 
     var email by Users.email
     var name by Users.name
@@ -42,6 +40,6 @@ class User(id: EntityID<Int>) : IntEntity(id) {
     var role by Users.role
 
     fun toModel(): UserModel {
-        return UserModel(id.value, email, name, surname, role)
+        return UserModel(id.value, email, name, surname, role, createdAt, updatedAt)
     }
 }

@@ -1,20 +1,12 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.features.CallLogging
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.DefaultHeaders
-import io.ktor.features.StatusPages
+import io.ktor.application.*
+import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import org.jetbrains.exposed.exceptions.ExposedSQLException
-import routes.user
-import java.text.DateFormat
 
 fun Application.main() {
 
@@ -25,7 +17,6 @@ fun Application.main() {
     install(CallLogging)
     install(ContentNegotiation) {
         gson {
-            setDateFormat(DateFormat.LONG)
             setPrettyPrinting()
         }
     }
