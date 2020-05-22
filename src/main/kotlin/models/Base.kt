@@ -4,7 +4,6 @@ import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.`java-time`.datetime
-import java.lang.Exception
 import java.time.LocalDateTime
 
 abstract class BaseIntIdTable(name: String) : IntIdTable(name) {
@@ -30,6 +29,3 @@ abstract class BaseIntEntityClass<E : BaseIntEntity>(table: BaseIntIdTable) : In
         }
     }
 }
-
-val BaseIntEntity.idValue: Int
-    get() = this.id.value
