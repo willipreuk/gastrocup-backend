@@ -7,10 +7,9 @@ import io.ktor.response.respond
 import io.ktor.routing.*
 import models.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.lang.IllegalArgumentException
 
-data class TeamPostData(val name: String, val leader: Int, val members: List<Int>)
-data class TeamPutData(val name: String?, val leader: Int?, val members: List<Int>?)
+data class TeamPostData(val name: String, val leader: Int, val members: List<Int>, val group: Int)
+data class TeamPutData(val name: String?, val leader: Int?, val members: List<Int>?, val group: Int?)
 
 fun Routing.team() {
     authenticate("Admin") {
@@ -46,6 +45,7 @@ fun Routing.team() {
                 Team.new {
                     name = data.name
                     leader = leaderData
+                    group = Group.findById(data.group) ?: throw IllegalArgumentException()
                 }
             }
             transaction {
@@ -76,10 +76,12 @@ fun Routing.team() {
                 data.members?.let {
                     team.members = User.find { Users.id inList it }
                 }
+                data.group?.let {
+                    team.group = Group.findById(it) ?: throw IllegalArgumentException()
+                }
             }
 
             val res = transaction { team.toModel() }
-
             call.respond(mapOf("data" to res))
         }
     }

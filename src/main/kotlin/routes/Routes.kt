@@ -7,5 +7,6 @@ fun Application.routes() {
     routing {
         user()
         team()
+        group()
     }
 }

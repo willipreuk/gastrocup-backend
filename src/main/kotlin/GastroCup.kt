@@ -1,5 +1,6 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
+import com.google.gson.*
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.gson.gson
@@ -7,6 +8,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import java.lang.reflect.Type
+import java.time.LocalDateTime
+
 
 fun Application.main() {
 
@@ -18,6 +22,11 @@ fun Application.main() {
     install(ContentNegotiation) {
         gson {
             setPrettyPrinting()
+            registerTypeAdapter(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime?> {
+                override fun serialize(src: LocalDateTime?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+                    return JsonPrimitive(src.toString())
+                }
+            })
         }
     }
     install(Routing)
