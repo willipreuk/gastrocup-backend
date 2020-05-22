@@ -1,5 +1,7 @@
 package routes
 
+import helper.PaginationHelper
+import helper.respondData
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
@@ -17,17 +19,22 @@ data class GroupPutData(val name: String?, val matchField: String?)
 fun Routing.group() {
     authenticate("Admin") {
         get("/groups") {
+            val pagination = PaginationHelper.paginate(call)
+
             val groups = transaction {
-                Group.all().map { it.toModel() }
+                Group.all().limit(pagination.perPage, pagination.offset).map { it.toModel() }
+            }
+            val total = transaction {
+                Group.all().count()
             }
 
-            call.respond(mapOf("data" to groups))
+            call.respondData(groups, total)
         }
         get("/group/{id}") {
             val group = Groups.getById(call.parameters["id"])
 
             val res = transaction { group.toModel() }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
         post("/group") {
             val data = call.receive<GroupPostData>()
@@ -40,7 +47,7 @@ fun Routing.group() {
             }
 
             val res = transaction { group.toModel() }
-            call.respond(res)
+            call.respondData(res)
         }
         put("/group/{id}") {
             val group = Groups.getById(call.parameters["id"])
@@ -52,7 +59,7 @@ fun Routing.group() {
             }
 
             val res = transaction { group.toModel() }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
         delete("/group/{id}") {
             val group = Groups.getById(call.parameters["id"])
@@ -66,7 +73,7 @@ fun Routing.group() {
                 }
             }
 
-            call.respond(mapOf("data" to group.id.value))
+            call.respondData(group.id.value)
         }
     }
 }

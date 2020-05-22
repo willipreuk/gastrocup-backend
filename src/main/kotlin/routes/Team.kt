@@ -1,9 +1,10 @@
 package routes
 
+import helper.PaginationHelper
+import helper.respondData
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.request.receive
-import io.ktor.response.respond
 import io.ktor.routing.*
 import models.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -14,16 +15,19 @@ data class TeamPutData(val name: String?, val leader: Int?, val members: List<In
 fun Routing.team() {
     authenticate("Admin") {
         get("/teams") {
+            val pagination = PaginationHelper.paginate(call)
+
             val teams = transaction {
-                Team.all().map { team -> team.toModel() }
+                Team.all().limit(pagination.perPage, pagination.offset).map { team -> team.toModel() }
             }
-            call.respond(mapOf("data" to teams))
+            val total = transaction { Team.all().count() }
+            call.respondData(teams, total)
         }
         get("/team/{id}") {
             val team = Teams.getById(call.parameters["id"])
 
             val res = transaction { team.toModel() }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
         post("/team") {
             val data = call.receive<TeamPostData>()
@@ -55,14 +59,13 @@ fun Routing.team() {
             val res = transaction {
                 team.toModel()
             }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
         delete("/team/{id}") {
             val team = Teams.getById(call.parameters["id"])
 
             transaction { team.delete() }
-            val res = transaction { team.toModel().id }
-            call.respond(mapOf("data" to res))
+            call.respondData(team.id.value)
         }
         put("/team/{id}") {
             val team = Teams.getById(call.parameters["id"])
@@ -82,7 +85,7 @@ fun Routing.team() {
             }
 
             val res = transaction { team.toModel() }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
     }
 }

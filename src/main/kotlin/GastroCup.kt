@@ -19,6 +19,9 @@ fun Application.main() {
 
     install(DefaultHeaders)
     install(CallLogging)
+    install(Routing)
+    install(Compression)
+    install(AutoHeadResponse)
     install(ContentNegotiation) {
         gson {
             setPrettyPrinting()
@@ -29,7 +32,6 @@ fun Application.main() {
             })
         }
     }
-    install(Routing)
     install(StatusPages) {
         exception<IllegalArgumentException> { cause ->
             call.response.status(HttpStatusCode.BadRequest)
