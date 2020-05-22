@@ -34,7 +34,7 @@ fun Routing.group() {
             val group = Groups.getById(call.parameters["id"])
 
             val res = transaction { group.toModel() }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
         post("/group") {
             val data = call.receive<GroupPostData>()
@@ -47,7 +47,7 @@ fun Routing.group() {
             }
 
             val res = transaction { group.toModel() }
-            call.respond(res)
+            call.respondData(res)
         }
         put("/group/{id}") {
             val group = Groups.getById(call.parameters["id"])
@@ -59,7 +59,7 @@ fun Routing.group() {
             }
 
             val res = transaction { group.toModel() }
-            call.respond(mapOf("data" to res))
+            call.respondData(res)
         }
         delete("/group/{id}") {
             val group = Groups.getById(call.parameters["id"])
@@ -73,7 +73,7 @@ fun Routing.group() {
                 }
             }
 
-            call.respond(mapOf("data" to group.id.value))
+            call.respondData(group.id.value)
         }
     }
 }
