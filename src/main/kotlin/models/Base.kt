@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 abstract class BaseIntIdTable(name: String) : IntIdTable(name) {
     val createdAt = datetime("createdAt").clientDefault { LocalDateTime.now() }
-    val updatedAt = datetime("updatedAt").nullable()
+    val updatedAt = datetime("updatedAt").clientDefault { LocalDateTime.now() }
 }
 
 abstract class BaseIntEntity(id: EntityID<Int>, table: BaseIntIdTable) : IntEntity(id) {
@@ -17,7 +17,7 @@ abstract class BaseIntEntity(id: EntityID<Int>, table: BaseIntIdTable) : IntEnti
     var updatedAt by table.updatedAt
 }
 
-abstract class BaseIntEntityClass<E : BaseIntEntity>(table: BaseIntIdTable): IntEntityClass<E>(table) {
+abstract class BaseIntEntityClass<E : BaseIntEntity>(table: BaseIntIdTable) : IntEntityClass<E>(table) {
     init {
         EntityHook.subscribe { action ->
             if (action.changeType == EntityChangeType.Updated) {
