@@ -72,6 +72,8 @@ fun Routing.user() {
                 data.role?.let { user.role = it }
                 data.surname?.let { user.surname = it }
             }
+
+            call.respond(mapOf("data" to user))
         }
         get("/user/{id}") {
             checkSameUser(call.authentication.principal<JWTPrincipal>(), call.parameters["id"]!!)
