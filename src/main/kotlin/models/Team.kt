@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
-data class TeamModel(val id: Int, val name: String, val group: GroupModel, val leader: UserModel, val members: List<UserModel>, val createdAt: LocalDateTime, val updatedAt: LocalDateTime)
+data class TeamModel(val id: Int, val name: String, val group: Int, val leader: UserModel, val members: List<UserModel>, val createdAt: LocalDateTime, val updatedAt: LocalDateTime)
 
 // junction table
 object TeamMembers : Table() {
@@ -18,7 +18,7 @@ object TeamMembers : Table() {
 object Teams : BaseIntIdTable("Teams") {
     val name = varchar("name", 50)
     val leader = reference("leader", Users)
-    val group = reference("group", Groups)
+    var group = reference("group", Groups, ReferenceOption.RESTRICT)
 
     fun getById(idString: String?) : Team {
         val id = idString?.toInt() ?: throw IllegalArgumentException()
@@ -36,7 +36,9 @@ class Team(id: EntityID<Int>): BaseIntEntity(id, Teams) {
     var group by Group referencedOn Teams.group
 
     fun toModel(): TeamModel {
-        return TeamModel(id.value, name, group.toModel(), leader.toModel(), members.toList().map { it.toModel() }, createdAt, updatedAt)
+
+        // no group serialization because of circular references
+        return TeamModel(id.value, name, group.id.value, leader.toModel(), members.toList().map { it.toModel() }, createdAt, updatedAt)
     }
 }
 
