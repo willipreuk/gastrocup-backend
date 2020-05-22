@@ -1,5 +1,7 @@
 package routes
 
+import helper.PaginationHelper
+import helper.respondData
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.HttpStatusCode
@@ -17,11 +19,16 @@ data class GroupPutData(val name: String?, val matchField: String?)
 fun Routing.group() {
     authenticate("Admin") {
         get("/groups") {
+            val pagination = PaginationHelper.paginate(call)
+
             val groups = transaction {
-                Group.all().map { it.toModel() }
+                Group.all().limit(pagination.perPage, pagination.offset).map { it.toModel() }
+            }
+            val total = transaction {
+                Group.all().count()
             }
 
-            call.respond(mapOf("data" to groups))
+            call.respondData(groups, total)
         }
         get("/group/{id}") {
             val group = Groups.getById(call.parameters["id"])

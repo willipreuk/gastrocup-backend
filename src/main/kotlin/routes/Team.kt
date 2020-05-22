@@ -1,5 +1,6 @@
 package routes
 
+import helper.PaginationHelper
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.request.receive
@@ -14,8 +15,10 @@ data class TeamPutData(val name: String?, val leader: Int?, val members: List<In
 fun Routing.team() {
     authenticate("Admin") {
         get("/teams") {
+            val pagination = PaginationHelper.paginate(call)
+
             val teams = transaction {
-                Team.all().map { team -> team.toModel() }
+                Team.all().limit(pagination.perPage, pagination.offset).map { team -> team.toModel() }
             }
             call.respond(mapOf("data" to teams))
         }
