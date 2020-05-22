@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.`java-time`.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.lang.IllegalArgumentException
 
@@ -22,6 +23,9 @@ object Teams : IntIdTable() {
     val name = varchar("name", 50)
     val leader = reference("leader", Users)
 
+    val createdAt = datetime("createdAt")
+    val updatedAt =  datetime("updatedAt")
+
     fun getById(idString: String?) : Team {
         val id = idString?.toInt() ?: throw IllegalArgumentException()
 
@@ -35,6 +39,9 @@ class Team(id: EntityID<Int>): IntEntity(id) {
     var name by Teams.name
     var leader by User referencedOn Teams.leader
     var members by User via TeamMembers
+
+    var createdAt by Teams.createdAt
+    var updatedAt by Teams.updatedAt
 
     fun toModel(): TeamModel {
          return TeamModel(id.value, name, leader.toModel(), members.toList().map { member -> member.toModel() })
