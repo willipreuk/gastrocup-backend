@@ -36,8 +36,7 @@ class PendingUser(id: EntityID<Int>) : BaseIntEntity(id, PendingUsers) {
             st.add("team", team.name)
             st.add("link", invitationLink)
         }
-        println(st.render())
 
-        mailer.sendEmail(email, "Invitation", st.render())
+        mailer.sendEmail(email, "Einladung Gastrocup", st.render())
     }
 }

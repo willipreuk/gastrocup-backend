@@ -12,8 +12,8 @@ class MailerConfigurationException : Exception() {
 }
 
 class Mailer {
-    var session: Session? = null
-    var fromEmail: InternetAddress? = null
+    private var session: Session? = null
+    private var fromEmail: InternetAddress? = null
 
     init {
         val env = System.getenv()
@@ -39,7 +39,7 @@ class Mailer {
 
             session = Session.getInstance(properties, auth)
         } catch (e: NullPointerException) {
-            throw e
+            throw MailerConfigurationException()
         }
     }
 
@@ -50,7 +50,7 @@ class Mailer {
         message.sentDate = Date()
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient, false))
         message.subject = subject
-        message.setText(messageText)
+        message.setContent(messageText, "text/html; charset=utf-8")
 
         val transport: SMTPTransport = session?.getTransport("smtp") as SMTPTransport
         transport.connect()

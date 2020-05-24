@@ -1,11 +1,17 @@
+delimiters "$", "$"
+
 invite(name, surname, team, link) ::= <<
+<html>
+<body>
+<p>Hallo $name$ $surname$,</p>
 
-Hallo <name> <surname>,
+<p>du wurdest eingeladen dem Team "$team$" beizutreten.<br/>
+Folge dem Link, um dein Konto zu aktivieren. Das Konto ermöglicht dir Spielpläne, Ergebnisse und noch viel mehr einzusehen.</p>
 
-du wurdest eingeladen dem Team <team> beizutreten.
-Folge dem Link, um dein Konto zu aktivieren. Das Konto ermöglicht dir Spielpläne, Ergebnisse und noch viel mehr einzusehen.
+<a href="$link$">Klicke hier!</a>
+<br/>
 
-<link>
-
-Dein Gastrocup Team
+<p>Dein Gastrocup Team</p>
+</body>
+</html>
 >>
