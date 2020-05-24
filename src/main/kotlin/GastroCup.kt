@@ -1,6 +1,7 @@
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
 import com.google.gson.*
+import helper.Mailer
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.gson.gson
@@ -16,6 +17,9 @@ fun Application.main() {
 
     val db = DB()
     db.createSchemas()
+
+    val mailer = Mailer()
+    mailer.sendEmail("willi@preuk.eu", "Test", "TestTest")
 
     install(DefaultHeaders)
     install(CallLogging)
