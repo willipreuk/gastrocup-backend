@@ -8,7 +8,7 @@ import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Routing
-import models.PendingUser
+import models.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.lang.reflect.Type
@@ -22,9 +22,17 @@ fun Application.main() {
 
     val mailer = Mailer()
     val pendingUser = transaction {
-        PendingUser.findById(1)
+        PendingUser.new {
+            email = "willi@preuk.eu"
+            name = "Lina"
+            surname = "Preuk"
+            invitedBy = User.findById(1)!!
+            invitationKey = PendingUsers.generateInvitationKey()
+            invitationKeyValid = true
+            team = Team.findById(1)!!
+        }
     }
-    pendingUser?.sendInvitationEmail(mailer)
+    pendingUser.sendInvitationEmail(mailer)
 
     install(DefaultHeaders)
     install(CallLogging)

@@ -8,5 +8,6 @@ fun Application.routes() {
         user()
         team()
         group()
+        pendingUser()
     }
 }
