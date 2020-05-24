@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile("org.antlr:ST4:4.4")
+    compile group: 'org.antlr', name: 'ST4', version: '4.3'
     compile("com.sun.mail:javax.mail:1.5.5")
 
     compile("org.jetbrains.exposed:exposed-core:0.24.1")
