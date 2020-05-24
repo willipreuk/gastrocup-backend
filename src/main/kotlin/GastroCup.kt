@@ -23,12 +23,11 @@ fun Application.main() {
     val mailer = Mailer()
     val pendingUser = transaction {
         PendingUser.new {
-            email = "willi@preuk.eu"
+            email = "willi@preuk.net"
             name = "Lina"
             surname = "Preuk"
             invitedBy = User.findById(1)!!
-            invitationKey = PendingUsers.generateInvitationKey()
-            invitationKeyValid = true
+            invitationToken = PendingUsers.generateInvitationToken()
             team = Team.findById(1)!!
         }
     }
@@ -55,18 +54,21 @@ fun Application.main() {
 
             // remove for production
             call.respond(mapOf("error" to cause.localizedMessage))
+            throw cause
         }
         exception<ExposedSQLException> { cause ->
             call.response.status(HttpStatusCode.BadRequest)
 
             // remove for production
             call.respond(mapOf("error" to cause.localizedMessage))
+            throw cause
         }
         exception<NoSuchElementException> { cause ->
             call.response.status(HttpStatusCode.NotFound)
 
             // remove for production
             call.respond(mapOf("error" to cause.localizedMessage))
+            throw cause
         }
     }
 }

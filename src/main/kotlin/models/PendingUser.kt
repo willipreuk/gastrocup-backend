@@ -12,14 +12,14 @@ object PendingUsers: BaseIntIdTable(name = "PendingUsers") {
     val surname = varchar("surname", 50)
     val email = varchar("email", 50).uniqueIndex()
     val invitedBy = reference("invited_by", Users)
-    val invitationKey = varchar("invitation_key", 100)
-    val invitationKeyValid = bool("invitation_key_valid")
+    val invitationToken = varchar("invitation_token", 100)
     val team = reference("team", Teams)
+    val invitationAccepted = bool("invitation_accepted").default(false)
 
-    fun generateInvitationKey(): String {
-        val key = Random.nextBytes(64)
+    fun generateInvitationToken(): String {
+        val token = Random.nextBytes(64)
 
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(key)
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(token)
     }
 }
 
@@ -30,8 +30,8 @@ class PendingUser(id: EntityID<Int>) : BaseIntEntity(id, PendingUsers) {
     var surname by PendingUsers.surname
     var email by PendingUsers.email
     var invitedBy by User referencedOn PendingUsers.invitedBy
-    var invitationKey by PendingUsers.invitationKey
-    var invitationKeyValid by PendingUsers.invitationKeyValid
+    var invitationToken by PendingUsers.invitationToken
+    var invitationAccepted by PendingUsers.invitationAccepted
     var team by Team referencedOn PendingUsers.team
 
     fun sendInvitationEmail(mailer: Mailer) {
@@ -40,9 +40,9 @@ class PendingUser(id: EntityID<Int>) : BaseIntEntity(id, PendingUsers) {
             st.add("name", name)
             st.add("surname", surname)
             st.add("team", team.name)
-            st.add("link", "http://localhost:8080/invite/$invitationKey")
+            st.add("link", "http://localhost:8080/invite/$invitationToken")
         }
 
-        //mailer.sendEmail(email, "Einladung Gastrocup", st.render())
+        mailer.sendEmail(email, "Einladung Gastrocup", st.render())
     }
 }
